@@ -6,54 +6,75 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 
-def draw_graph(graph):
-    # Crear una figura y un objeto de ejes
-    fig, ax = plt.subplots()
-
-    # Calcular el ángulo de separación entre los nodos
-    num_nodes = len(graph)
-    theta = 2 * np.pi / num_nodes
-
-    # Asignar posiciones en el eje x a cada nodo
-    positions = {node: (np.cos(i * theta), np.sin(i * theta))
-                 for i, node in enumerate(graph)}
-
-    # Dibujar los nodos como puntos en el gráfico
-    for node, position in positions.items():
-        ax.scatter(position[0], position[1], color='blue')
-        ax.annotate(node, position, textcoords="offset points",
-                    xytext=(0, 10), ha='center')
-
-    # Dibujar las aristas entre los nodos
-    for node, neighbors in graph.items():
-        x1, y1 = positions[node]
-        for neighbor, cost in neighbors:
-            x2, y2 = positions[neighbor]
-            ax.plot([x1, x2], [y1, y2], color='black')
-
-    # Establecer los límites del gráfico
-    ax.set_xlim([-1.5, 1.5])
-    ax.set_ylim([-1.5, 1.5])
-
-    # Mostrar el gráfico
-    plt.show()
-
-
-def drawGraphNX(graph: Graph):
+def drawGraphNX(graph: Graph, shortestPath, shortestEdge):
     g = nx.Graph()
     # Agregar nodos y aristas al grafo
     for node, neighbors in graph.graph.items():
         for neighbor, cost in neighbors:
-            g.add_edge(node, neighbor)
+            g.add_edge(node, neighbor, weight=cost) # Add edge weight to graph
+
+    # Crear un layout para el grafo
+    pos = nx.spring_layout(g, seed=900)
+
+    # Seleccion de color para los Grafos con visa 
+    node_colors_visa = {'CCS':'blue','AUA':'red','BON':'red','CUR':'red','SXM':'red','SDQ':'red', 'SBH':'blue','POS':'blue','BGI':'blue','FDF':'blue','PTP':'blue'}
+
+    # Diccionario para elegir el color del path tomado para el camino mas corto
+    node_colors_shortestPath = {}
+
+    # Diccionario para elegir el color de los edges tomados para el camino mas corto
+    node_colors_shortestEdge = {}
+
+    # Diccionario para agregarle le peso al camino usado
+    edge_labels = {}
+
+    #For loop para agregar los datos a cada diccionario
+    for node in g.nodes():
+        if node in shortestPath:
+            node_colors_shortestPath[node] = "yellow"
+        else:
+            node_colors_shortestPath[node] = "gray"
+
+        if shortestEdge and node == shortestEdge[0][0]:
+            for node2 in g.nodes():
+                if node2 == shortestEdge[0][1]:
+                    node_colors_shortestEdge[(node,node2)] = 'red'
+                    edge_labels[(node, node2)] = g[node][node2]['weight']
+                else:
+                    node_colors_shortestEdge[(node,node2)] = 'gray'
+        elif shortestEdge and node == shortestEdge[0][1]:
+            for node2 in g.nodes():
+                if node2 == shortestEdge[0][0]:
+                    node_colors_shortestEdge[(node,node2)] = 'red'
+                    edge_labels[(node, node2)] = g[node][node2]['weight']
+                else:
+                    node_colors_shortestEdge[(node,node2)] = 'gray'
+        elif shortestEdge and node == shortestEdge[1][0]:
+            for node2 in g.nodes():
+                if node2 == shortestEdge[1][1]:
+                    node_colors_shortestEdge[(node,node2)] = 'red'
+                    edge_labels[(node, node2)] = g[node][node2]['weight']
+                else:
+                    node_colors_shortestEdge[(node,node2)] = 'gray'
+        elif shortestEdge and node == shortestEdge[1][1]:
+            for node2 in g.nodes():
+                if node2 == shortestEdge[1][0]:
+                    node_colors_shortestEdge[(node,node2)] = 'red'
+                    edge_labels[(node, node2)] = g[node][node2]['weight']
+                else:
+                    node_colors_shortestEdge[(node,node2)] = 'gray'
+        else:
+            node_colors_shortestEdge[node] = 'gray'
+
+    #Colores para el grafo
+    colors_shortestPath = [node_colors_shortestPath[node] for node in g.nodes()]
+    colors_shortestEdge = [node_colors_shortestEdge.get(edge, 'gray') for edge in g.edges()]
 
     # Dibujar el grafo
-    nx.draw(g, with_labels=True, node_color='lightblue', node_size=500,
-            font_size=10, edge_color='gray', width=1, alpha=0.7)
+    nx.draw(g, pos=pos, with_labels=True, node_size=600, node_color=colors_shortestPath, font_size=10, edge_color=colors_shortestEdge, width=1, alpha=0.7)
 
-    # Etiquetas de las aristas
-    labels = nx.get_edge_attributes(g, 'weight')
-    nx.draw_networkx_edge_labels(
-        g, pos=nx.spring_layout(g, seed=60), edge_labels=labels)
+    # Dibujar las etiquetas de las aristas
+    nx.draw_networkx_edge_labels(g, pos, edge_labels=edge_labels, font_color='black')
 
     # Mostrar el gráfico
     plt.show()
@@ -67,22 +88,63 @@ def main():
 
     graph.printGraph()
 
-    drawGraphNX(graph)
+    startNode = 'PTP'
+    end_node = 'CCS'
+    hasVisa = False
+
+    shortest_distance, shortest_path, shortest_edge = graph.findShortestPath(
+        startNode, end_node, hasVisa)
+
+    drawGraphNX(graph, shortest_path, shortest_edge)
 
     print("\n")
 
     # draw_graph(graph.graph)
+    
+    # Inicio de la interfaz grafica
 
-    # startNode = 'PTP'
-    # end_node = 'CCS'
-    # hasVisa = False
+    # root = tk.Tk()
+    # root.geometry("1600x800")
+    # root.title("Hi")
+    # leftBackground = '#581845'
+    # darkBackground = '#892915'
+    # style = ttk.Style()
+    # style.configure('C.TButton', font = ('Helvetica', 12, 'bold'), foreground = darkBackground, background=darkBackground)
 
-    # shortest_distance, shortest_path = graph.findShortestPath(
-    #     startNode, end_node, hasVisa)
+    # rightFrame = tk.Frame(root)
+    # rightFrame.pack(side='right')
 
-    # print(
-    #     f"La distancia más corta desde {startNode} hasta {end_node} es: {shortest_distance}")
-    # print(f"El camino más corto es: {shortest_path} \n")
+    # leftFrame = tk.Frame(root)
+    # leftFrame.pack(side='left')
+    # leftFrame.config(bd=15, background=leftBackground)
+
+    # # Título
+    # tk.Label(leftFrame, foreground='white', background=leftBackground, text = "Wepa", font=('Helvetica', 18, 'bold') ).pack(fill='x', pady=15)
+    
+    # # String donde va el dato de donde comienza
+    # startingPoint = tk.StringVar()
+    # startingPoint.set("")
+    # # String donde va el dato de a donde quiere llegar
+    # arrivingPoint = tk.StringVar()
+    # arrivingPoint.set("")
+    # # String donde va si tiene visa o no
+    # tk.Label(leftFrame, foreground='white', background=leftBackground, text = "Punto de Partida", font=('Helvetica', 12, 'bold') ).pack(fill='x',pady=15)
+    # tk.Entry(leftFrame, highlightthickness=0, disabledbackground="white", disabledforeground=darkBackground, state='normal', font=('Helvetica', 12), textvariable=startingPoint, justify='center').pack(fill='x', pady=15)
+    # tk.Label(leftFrame, foreground='white', background=leftBackground, text = "Punto de Llegada", font=('Helvetica', 12, 'bold') ).pack(fill='x', pady=15)
+    # tk.Entry(leftFrame, highlightthickness=0, disabledbackground="white", disabledforeground=darkBackground, state='normal', font=('Helvetica', 12), textvariable=arrivingPoint, justify='center').pack(fill='x', pady=15)
+    
+    # tk.Label(leftFrame, foreground='white', background=leftBackground, text = "Posee Visa?", font=('Helvetica', 12, 'bold') ).pack(fill='x', pady=15)
+    # combo = ttk.Combobox(leftFrame, state="readonly", values=["Si tengo Visa", "No tengo Visa"], width='100', font=('Helvetica', 14))
+    # combo.set(combo["values"][0])
+    # combo.pack(fill='x', pady=15)
+    
+    # ttk.Button(leftFrame, text="Comenzar", command = lambda: draw_graph(graph.graph), padding=15, style='C.TButton').pack(fill='x', pady=15)
+    # f = plt.Figure(figsize=(7, 7), dpi=100)
+    # canvas = FigureCanvasTkAgg(f, rightFrame)
+    # canvas.get_tk_widget().pack()
+    # root.mainloop()
+
+    
 
     # shortest_stop_path = graph.findShortestStopPath(
     #     startNode, end_node, hasVisa)

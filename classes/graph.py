@@ -86,7 +86,12 @@ class Graph:
         path.append(startNode)
         path.reverse()
 
-        return nodes[endNode]['distance'], path
+        edges = []
+        for i in range(len(path) - 1):
+            edges.append((path[i], path[i+1]))
+
+        return nodes[endNode]['distance'], path, edges
+    
 
     def findShortestStopPath(self, startNode: str, endNode: str, hasVisa: bool):
         if (not hasVisa and self.nodes[startNode].visaRequired):
