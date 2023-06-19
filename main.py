@@ -1,4 +1,4 @@
-from interface.interface import start
+from interface.interface import drawGraphNX, start
 from classes.graph import Graph
 from scripts.csv import *
 import matplotlib.pyplot as plt
@@ -11,13 +11,38 @@ from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
+
+def prueba(graph: Graph):
+    g = nx.Graph()
+    # Agregar nodos y aristas al grafo
+    for node, neighbors in graph.graph.items():
+        for neighbor, cost in neighbors:
+            g.add_edge(node, neighbor, weight=cost)  # Add edge weight to graph
+    print(g.nodes(data='CCS'))
+
+
 def main():
     graph = Graph()
     getNodesData(graph)
     getEdgesData(graph)
-    
+
+    # prueba(graph)
+
+    # start(graph)
+
+    startNode = 'CCS'
+    end_node = "PTP"
+    hasVisa = True
+
     start(graph)
-    
+
+    # shortest_distance, shortest_path = graph.findShortestPath(
+    #     startNode, end_node, hasVisa)
+
+    # # shortest_path = graph.findShortestStopPath(startNode, end_node, hasVisa)
+
+    # drawGraphNX(graph, shortest_path)
+
     # Inicio de la interfaz grafica
 
     # root = tk.Tk()
@@ -37,7 +62,7 @@ def main():
 
     # # Título
     # tk.Label(leftFrame, foreground='white', background=leftBackground, text = "Wepa", font=('Helvetica', 18, 'bold') ).pack(fill='x', pady=15)
-    
+
     # # String donde va el dato de donde comienza
     # startingPoint = tk.StringVar()
     # startingPoint.set("")
@@ -49,19 +74,17 @@ def main():
     # tk.Entry(leftFrame, highlightthickness=0, disabledbackground="white", disabledforeground=darkBackground, state='normal', font=('Helvetica', 12), textvariable=startingPoint, justify='center').pack(fill='x', pady=15)
     # tk.Label(leftFrame, foreground='white', background=leftBackground, text = "Punto de Llegada", font=('Helvetica', 12, 'bold') ).pack(fill='x', pady=15)
     # tk.Entry(leftFrame, highlightthickness=0, disabledbackground="white", disabledforeground=darkBackground, state='normal', font=('Helvetica', 12), textvariable=arrivingPoint, justify='center').pack(fill='x', pady=15)
-    
+
     # tk.Label(leftFrame, foreground='white', background=leftBackground, text = "Posee Visa?", font=('Helvetica', 12, 'bold') ).pack(fill='x', pady=15)
     # combo = ttk.Combobox(leftFrame, state="readonly", values=["Si tengo Visa", "No tengo Visa"], width='100', font=('Helvetica', 14))
     # combo.set(combo["values"][0])
     # combo.pack(fill='x', pady=15)
-    
+
     # ttk.Button(leftFrame, text="Comenzar", command = lambda: drawGraphNX(graph.graph), padding=15, style='C.TButton').pack(fill='x', pady=15)
     # f = plt.Figure(figsize=(7, 7), dpi=100)
     # canvas = FigureCanvasTkAgg(f, rightFrame)
     # canvas.get_tk_widget().pack()
     # root.mainloop()
-
-    
 
     # shortest_stop_path = graph.findShortestStopPath(
     #     startNode, end_node, hasVisa)
@@ -70,7 +93,7 @@ def main():
     #     f"La menor cantidad de escalas desde {startNode} hasta {end_node} es: {len(shortest_stop_path) - 2}")
     # print(f"El camino con menor cantidad de escalas es: {shortest_stop_path}")
 
-    # Crear el objeto de grafo
 
+    # Crear el objeto de grafo
 if __name__ == '__main__':
     main()

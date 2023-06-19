@@ -86,14 +86,10 @@ class Graph:
         path.append(startNode)
         path.reverse()
 
-        edges = []
-        for i in range(len(path) - 1):
-            edges.append((path[i], path[i+1]))
-
-        return nodes[endNode]['distance'], path, edges
-    
+        return nodes[endNode]['distance'], path
 
     def findShortestStopPath(self, startNode: str, endNode: str, hasVisa: bool):
+
         if (not hasVisa and self.nodes[startNode].visaRequired):
             raise ValueError(
                 f"Para comenzar por el nodo {startNode} se requiere de una visa.")
@@ -106,10 +102,14 @@ class Graph:
         path = []
 
         # Cola para almacenar los nodos a visitar
-        queue = deque([(startNode, [])])
+        queue = [(startNode, [])]
 
         while queue:
-            currentNode, currentPath = queue.popleft()
+            currentNode, currentPath = queue.pop(0)
+
+            # Solo se pueden contemplar las islas que se puedan visitar
+            if (not hasVisa and self.nodes[currentNode].visaRequired):
+                continue
 
             if currentNode == endNode:
                 # Se encontró el nodo de destino, se retorna el camino
