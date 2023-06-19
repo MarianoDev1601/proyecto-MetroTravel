@@ -52,18 +52,26 @@ def drawGraphNX(graph: Graph, shortestPath: list):
         origNode = ''
         destNode = ''
         if node in shortestPath:
-            node_colors_shortestPath[node] = "yellow"
+            # Verificamos si tiene visa para pintarlo de un color u otro
+            if (graph.nodes[node].visaRequired):
+                node_colors_shortestPath[node] = "blue"
+            else:
+                node_colors_shortestPath[node] = "yellow"
+            # Obtenemos la posición del nodo actual en la lista del camino
             pos = shortestPath.index(node)
+            # Se verifica si el nodo que se está revisando es el último para poder setear correctamente el nodo origen y destino
             if (pos == len(shortestPath) - 1):
                 origNode = shortestPath[pos - 1]
                 destNode = shortestPath[pos]
             else:
                 origNode = shortestPath[pos]
                 destNode = shortestPath[pos + 1]
+        # En caso de que no se encuentre en el camino a seguir, el nodo y su camino se pintan de gris y se sigue continua con el siguiente nodeo del for
         else:
             node_colors_shortestPath[node] = "gray"
             node_colors_shortestEdge[node] = 'gray'
             continue
+        # En caso de que node se encuentre en el camino más corto, se pinta de rojo su arista y se coloca su peso para ser visualizado
         node_colors_shortestEdge[(origNode, destNode)] = 'red'
         edge_labels[(origNode, destNode)] = str(
             g[origNode][destNode]['weight'])
