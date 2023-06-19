@@ -12,27 +12,10 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
 
-def prueba(graph: Graph):
-    g = nx.Graph()
-    # Agregar nodos y aristas al grafo
-    for node, neighbors in graph.graph.items():
-        for neighbor, cost in neighbors:
-            g.add_edge(node, neighbor, weight=cost)  # Add edge weight to graph
-    print(g.nodes(data='CCS'))
-
-
 def main():
     graph = Graph()
     getNodesData(graph)
     getEdgesData(graph)
-
-    # prueba(graph)
-
-    # start(graph)
-
-    startNode = 'CCS'
-    end_node = "PTP"
-    hasVisa = True
 
     start(graph)
 
