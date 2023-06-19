@@ -89,21 +89,18 @@ class Graph:
         return nodes[endNode]['distance'], path
 
     def findShortestStopPath(self, startNode: str, endNode: str, hasVisa: bool):
-
         if (not hasVisa and self.nodes[startNode].visaRequired):
-            raise ValueError(
-                f"Para comenzar por el nodo {startNode} se requiere de una visa.")
+            raise ValueError(f"Para comenzar por el nodo {startNode} se requiere de una visa.")
         if (not hasVisa and self.nodes[endNode].visaRequired):
-            raise ValueError(
-                f"Para llegar a el nodo {endNode} se requiere de una visa.")
+            raise ValueError(f"Para llegar a el nodo {endNode} se requiere de una visa.")
 
         # Inicializar los nodos visitados y el camino
         visited = set()
         path = []
 
         # Cola para almacenar los nodos a visitar
-        queue = [(startNode, [], 0)]
-        totalCost = None
+        queue = [(startNode, [])]
+
         while queue:
             currentNode, currentPath, currentCost = queue.pop(0)
 
@@ -119,13 +116,13 @@ class Graph:
 
             if currentNode not in visited:
                 visited.add(currentNode)
-                for neighbor, cost in self.graph[currentNode]:
-                    queue.append((neighbor, currentPath +
-                                 [currentNode], currentCost + cost))
+                for neighbor in self.graph[currentNode]:
+                    queue.append((neighbor[0], currentPath + [currentNode]))
 
         if not path:
             # No se encontró un camino desde el nodo de inicio al nodo de destino
-            raise ValueError(
-                "No se encontró un camino desde el nodo de inicio al nodo de destino.")
+            raise ValueError("No se encontró un camino desde el nodo de inicio al nodo de destino.")
 
         return totalCost, path
+
+        return path
