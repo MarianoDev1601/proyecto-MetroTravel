@@ -102,10 +102,10 @@ class Graph:
         path = []
 
         # Cola para almacenar los nodos a visitar
-        queue = [(startNode, [])]
-
+        queue = [(startNode, [], 0)]
+        totalCost = None
         while queue:
-            currentNode, currentPath = queue.pop(0)
+            currentNode, currentPath, currentCost = queue.pop(0)
 
             # Solo se pueden contemplar las islas que se puedan visitar
             if (not hasVisa and self.nodes[currentNode].visaRequired):
@@ -113,17 +113,19 @@ class Graph:
 
             if currentNode == endNode:
                 # Se encontró el nodo de destino, se retorna el camino
+                totalCost = currentCost
                 path = currentPath + [currentNode]
                 break
 
             if currentNode not in visited:
                 visited.add(currentNode)
-                for neighbor in self.graph[currentNode]:
-                    queue.append((neighbor[0], currentPath + [currentNode]))
+                for neighbor, cost in self.graph[currentNode]:
+                    queue.append((neighbor, currentPath +
+                                 [currentNode], currentCost + cost))
 
         if not path:
             # No se encontró un camino desde el nodo de inicio al nodo de destino
             raise ValueError(
                 "No se encontró un camino desde el nodo de inicio al nodo de destino.")
 
-        return path
+        return totalCost, path
