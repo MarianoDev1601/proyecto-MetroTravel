@@ -46,6 +46,8 @@ def drawGraph(graph: Graph):
     nodes_colorsNX = [nodeColors[node]
                       for node in g.nodes()]
 
+    plt.clf()
+
     # Dibujar el grafo
     nx.draw(g, pos=posNX, with_labels=True, node_size=600, node_color=nodes_colorsNX,
             font_size=10, width=1, alpha=0.7)
@@ -196,6 +198,18 @@ def printRoute(graph, origin, destination, visa, pathType):
                         cost = ttk.Label(
                             left_frame, text="$" + str(shortest_distance), font=("Arial", 14), background="orange")
                         cost.grid(row=6, column=3, pady=5)
+                        
+                        blank = ttk.Label(left_frame, text=" ", font=("Arial", 14), background="orange")
+                        blank.grid(row=7, column=0, columnspan=4, pady=15)
+                        
+                        information = ttk.Label(left_frame, text="¡Importante!", font=("Arial", 14), background="orange")
+                        information.grid(row=8, column=0, columnspan=4, pady=5)
+                        
+                        information1 = ttk.Label(left_frame, text="Los países en rojo requieren visa.", font=("Arial", 14), background="orange")
+                        information1.grid(row=9, column=0, columnspan=4, pady=5)
+                        
+                        information2 = ttk.Label(left_frame, text="El país en verde es el origen de la ruta.", font=("Arial", 14), background="orange")
+                        information2.grid(row=10, column=0, columnspan=4, pady=5)
 
                     elif path == "Ruta más barata":
                         shortest_distance, shortest_path = graph.findShortestPath(
@@ -238,6 +252,18 @@ def printRoute(graph, origin, destination, visa, pathType):
                         cost = ttk.Label(
                             left_frame, text="$" + str(shortest_distance), font=("Arial", 14), background="orange")
                         cost.grid(row=6, column=3, pady=5)
+                        
+                        blank = ttk.Label(left_frame, text=" ", font=("Arial", 14), background="orange")
+                        blank.grid(row=7, column=0, columnspan=4, pady=15)
+                        
+                        information = ttk.Label(left_frame, text="¡Importante!", font=("Arial", 14), background="orange")
+                        information.grid(row=8, column=0, columnspan=4, pady=5)
+                        
+                        information1 = ttk.Label(left_frame, text="Los países en rojo requieren visa.", font=("Arial", 14), background="orange")
+                        information1.grid(row=9, column=0, columnspan=4, pady=5)
+                        
+                        information2 = ttk.Label(left_frame, text="El país en verde es el origen de la ruta.", font=("Arial", 14), background="orange")
+                        information2.grid(row=10, column=0, columnspan=4, pady=5)
 
                 except ValueError as e:
                     errorDialog(e)
@@ -321,7 +347,13 @@ def start(graph: Graph):
     travel = ttk.Button(left_frame, text="Buscar vuelos", command=lambda: printRoute(
         graph, origin, destination, visa, pathType), style="TButton")
     travel.grid(row=3, column=0, columnspan=4, pady=20)
-
+    
+    information = ttk.Label(left_frame, text="¡Importante!", font=("Arial", 14), background="orange")
+    information.grid(row=6, column=0, columnspan=4, pady=5)
+    
+    information1 = ttk.Label(left_frame, text="Los países en rojo requieren visa.", font=("Arial", 14), background="orange")
+    information1.grid(row=7, column=0, columnspan=4, pady=5)
+    
     # Lado derecho
     right_frame = ttk.Frame(interface)
     right_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
