@@ -17,21 +17,12 @@ def main():
     getNodesData(graph)
     getEdgesData(graph)
 
-    # start(graph)
+    start(graph)
 
-    startNode = 'CCS'
-    end_node = 'PTP'
-    hasVisa = True
     # shortest_distance, shortest_path = graph.findShortestPath(
     #     startNode, end_node, hasVisa)
 
-    totalCost, shortest_stop_path = graph.findShortestStopPath(
-        startNode, end_node, hasVisa)
-
-    print(
-        f"La menor cantidad de escalas desde {startNode} hasta {end_node} es: {len(shortest_stop_path) - 2}")
-    print(f"El camino con menor cantidad de escalas es: {shortest_stop_path}")
-    print(f"Costo total: {totalCost}")
+    # # shortest_path = graph.findShortestStopPath(startNode, end_node, hasVisa)
 
     # drawGraphNX(graph, shortest_path)
 
@@ -77,6 +68,13 @@ def main():
     # canvas = FigureCanvasTkAgg(f, rightFrame)
     # canvas.get_tk_widget().pack()
     # root.mainloop()
+
+    # shortest_stop_path = graph.findShortestStopPath(
+    #     startNode, end_node, hasVisa)
+
+    # print(
+    #     f"La menor cantidad de escalas desde {startNode} hasta {end_node} es: {len(shortest_stop_path) - 2}")
+    # print(f"El camino con menor cantidad de escalas es: {shortest_stop_path}")
 
     # Crear el objeto de grafo
 if __name__ == '__main__':

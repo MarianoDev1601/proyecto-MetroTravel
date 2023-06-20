@@ -26,31 +26,39 @@ def destinationsList(graph: Graph):
         destinations.append(node)
     return destinations
 
+
 def drawGraph(graph: Graph):
     g = nx.Graph()
-        
+    nodeColors = {}
     # Agregar nodos y aristas al grafo
     for node, neighbors in graph.graph.items():
+        if (graph.nodes[node].visaRequired):
+            nodeColors[node] = 'red'
+        else:
+            nodeColors[node] = 'yellow'
         for neighbor, cost in neighbors:
             g.add_edge(node, neighbor, weight=cost)
-                
+
     # Crear un layout para el grafo
     posNX = nx.spring_layout(g, seed=900)
-    
-    # Seleccion de color para los Grafos con visa
-    node_colors_visa = {'CCS': 'blue', 'AUA': 'red', 'BON': 'red', 'CUR': 'red', 'SXM': 'red', 'SDQ': 'red', 'SBH': 'blue', 'POS': 'blue', 'BGI': 'blue', 'FDF': 'blue', 'PTP': 'blue'}
-    
+
+    # Agregamos los colores
+    nodes_colorsNX = [nodeColors[node]
+                      for node in g.nodes()]
+
     # Dibujar el grafo
-    nx.draw(g, pos=posNX, with_labels=True, node_size=600, font_size=10, width=1, alpha=0.7)
-    
+    nx.draw(g, pos=posNX, with_labels=True, node_size=600, node_color=nodes_colorsNX,
+            font_size=10, width=1, alpha=0.7)
+
     # Agregar el canvas al lado derecho
     canvas = FigureCanvasTkAgg(plt.gcf(), master=right_frame)
     canvas.draw()
     canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
-    
+
+
 def drawGraphNX(graph: Graph, shortestPath: list):
     g = nx.Graph()
-    
+
     # Agregar nodos y aristas al grafo
     for node, neighbors in graph.graph.items():
         for neighbor, cost in neighbors:
@@ -112,13 +120,13 @@ def drawGraphNX(graph: Graph, shortestPath: list):
             font_size=10, edge_color=colors_shortestEdge, width=1, alpha=0.7)
 
     # Dibujar las etiquetas de las aristas
-    nx.draw_networkx_edge_labels(g, posNX, edge_labels=edge_labels, font_color='black')
-    
+    nx.draw_networkx_edge_labels(
+        g, posNX, edge_labels=edge_labels, font_color='black')
+
     # Agregar el canvas al lado derecho
     canvas = FigureCanvasTkAgg(plt.gcf(), master=right_frame)
     canvas.draw()
     canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
-
 
 
 def clearRows(list):
@@ -126,94 +134,110 @@ def clearRows(list):
         widgets = left_frame.grid_slaves(row=row)
         for widget in widgets:
             widget.grid_forget()
-            
+
     for widget in right_frame.winfo_children():
         widget.destroy()
 
-def printRoute(graph, origin, destination, visa, pathType):  
-    clearRows([4,5,6,7,8])
-    if(origin.get() != "" and destination.get() != "" and visa.get() != "" and pathType.get() != ""):
+
+def printRoute(graph, origin, destination, visa, pathType):
+    clearRows([4, 5, 6, 7, 8])
+    if (origin.get() != "" and destination.get() != "" and visa.get() != "" and pathType.get() != ""):
         if ((origin.get().upper() in origins) and (destination.get().upper() in destinations)):
             startNode = origin.get().upper()
             end_node = destination.get().upper()
-            
+
             path = pathType.get()
-            
+
             if visa.get() == "Si":
                 hasVisa = True
             elif visa.get() == "No":
                 hasVisa = False
-                    
+
             try:
                 if path == "Ruta con menos paradas":
-                    shortest_distance, shortest_path = graph.findShortestStopPath(startNode, end_node, hasVisa)
-                    
+                    shortest_distance, shortest_path = graph.findShortestStopPath(
+                        startNode, end_node, hasVisa)
+
                     finalPath = ""
                     index = 1
                     scales = len(shortest_path)
-                    
+
                     for node in shortest_path:
                         if index < scales:
-                            finalPath += node + " ---> " 
+                            finalPath += node + " ---> "
                             index += 1
                         else:
                             finalPath += node
-                            
+
                     drawGraphNX(graph, shortest_path)
-                    
-                    result = ttk.Label(left_frame, text="¡Vuelos Encontrados!", font=("Arial", 14), background="orange")
+
+                    result = ttk.Label(left_frame, text="¡Vuelos Encontrados!", font=(
+                        "Arial", 14), background="orange")
                     result.grid(row=4, column=0, columnspan=4, pady=10)
-                    
-                    countryL = ttk.Label(left_frame, text="Ruta encontrada:", font=("Arial", 14), background="orange")
+
+                    countryL = ttk.Label(left_frame, text="Ruta encontrada:", font=(
+                        "Arial", 14), background="orange")
                     countryL.grid(row=5, column=0, columnspan=2, pady=5)
-                    country = ttk.Label(left_frame, text=finalPath, font=("Arial", 14), background="orange")
+                    country = ttk.Label(left_frame, text=finalPath, font=(
+                        "Arial", 14), background="orange")
                     country.grid(row=6, column=0, columnspan=2, pady=5)
-                    
-                    stopsL = ttk.Label(left_frame, text="Número de escalas:", font=("Arial", 14), background="orange")
+
+                    stopsL = ttk.Label(left_frame, text="Número de escalas:", font=(
+                        "Arial", 14), background="orange")
                     stopsL.grid(row=5, column=2, pady=5)
-                    stops = ttk.Label(left_frame, text=str(scales-2), font=("Arial", 14), background="orange")
+                    stops = ttk.Label(left_frame, text=str(
+                        scales-2), font=("Arial", 14), background="orange")
                     stops.grid(row=6, column=2, pady=5)
-                    
-                    costL = ttk.Label(left_frame, text="Costo total:", font=("Arial", 14), background="orange")
+
+                    costL = ttk.Label(left_frame, text="Costo total:", font=(
+                        "Arial", 14), background="orange")
                     costL.grid(row=5, column=3, pady=5)
-                    cost = ttk.Label(left_frame, text="$" + str(shortest_distance), font=("Arial", 14), background="orange")
+                    cost = ttk.Label(
+                        left_frame, text="$" + str(shortest_distance), font=("Arial", 14), background="orange")
                     cost.grid(row=6, column=3, pady=5)
-                    
-                    
+
                 elif path == "Ruta más barata":
-                    shortest_distance, shortest_path = graph.findShortestPath(startNode, end_node, hasVisa)
-                    
+                    shortest_distance, shortest_path = graph.findShortestPath(
+                        startNode, end_node, hasVisa)
+
                     finalPath = ""
                     index = 1
                     scales = len(shortest_path)
-                    
+
                     for node in shortest_path:
                         if index < scales:
-                            finalPath += node + " ---> " 
+                            finalPath += node + " ---> "
                             index += 1
                         else:
                             finalPath += node
-                            
+
                     drawGraphNX(graph, shortest_path)
-                    
-                    result = ttk.Label(left_frame, text="¡Vuelos Encontrados!", font=("Arial", 14), background="orange")
+
+                    result = ttk.Label(left_frame, text="¡Vuelos Encontrados!", font=(
+                        "Arial", 14), background="orange")
                     result.grid(row=4, column=0, columnspan=4, pady=10)
-                    
-                    countryL = ttk.Label(left_frame, text="Ruta encontrada:", font=("Arial", 14), background="orange")
+
+                    countryL = ttk.Label(left_frame, text="Ruta encontrada:", font=(
+                        "Arial", 14), background="orange")
                     countryL.grid(row=5, column=0, columnspan=2, pady=5)
-                    country = ttk.Label(left_frame, text=finalPath, font=("Arial", 14), background="orange")
+                    country = ttk.Label(left_frame, text=finalPath, font=(
+                        "Arial", 14), background="orange")
                     country.grid(row=6, column=0, columnspan=2, pady=5)
-                    
-                    stopsL = ttk.Label(left_frame, text="Número de escalas:", font=("Arial", 14), background="orange")
+
+                    stopsL = ttk.Label(left_frame, text="Número de escalas:", font=(
+                        "Arial", 14), background="orange")
                     stopsL.grid(row=5, column=2, pady=5)
-                    stops = ttk.Label(left_frame, text=str(scales-2), font=("Arial", 14), background="orange")
+                    stops = ttk.Label(left_frame, text=str(
+                        scales-2), font=("Arial", 14), background="orange")
                     stops.grid(row=6, column=2, pady=5)
-                    
-                    costL = ttk.Label(left_frame, text="Costo total:", font=("Arial", 14), background="orange")
+
+                    costL = ttk.Label(left_frame, text="Costo total:", font=(
+                        "Arial", 14), background="orange")
                     costL.grid(row=5, column=3, pady=5)
-                    cost = ttk.Label(left_frame, text="$" + str(shortest_distance), font=("Arial", 14), background="orange")
+                    cost = ttk.Label(
+                        left_frame, text="$" + str(shortest_distance), font=("Arial", 14), background="orange")
                     cost.grid(row=6, column=3, pady=5)
-                
+
             except ValueError:
                 errorDialog()
                 drawGraph()
@@ -226,9 +250,12 @@ def printRoute(graph, origin, destination, visa, pathType):
 
 def validateDialog():
     messagebox.showerror("Error", "Asegurese de rellenar todos los campos.")
-    
+
+
 def codeDialog():
-    messagebox.showerror("Error", "Asegurese de ingresar los códigos de paises válidos.")
+    messagebox.showerror(
+        "Error", "Asegurese de ingresar los códigos de paises válidos.")
+
 
 def errorDialog():
     messagebox.showerror("Error", "No cuenta con la Visa para viajar.")
@@ -251,38 +278,44 @@ def start(graph: Graph):
     left_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
     # Título centrado
-    title = ttk.Label(left_frame, text="Bienvenido a MetroTravel", font=("Arial", 20), background="orange")
+    title = ttk.Label(left_frame, text="Bienvenido a MetroTravel",
+                      font=("Arial", 20), background="orange")
     title.grid(row=0, column=0, columnspan=4, pady=10)
 
-    originsLabel = ttk.Label(left_frame, text="País de Origen:", style="TLabel")
+    originsLabel = ttk.Label(
+        left_frame, text="País de Origen:", style="TLabel")
     originsLabel.grid(row=1, column=0, padx=10, sticky="w")
     origins = originsList(graph)
     origin = ttk.Combobox(left_frame, values=origins)
     origin.grid(row=2, column=0, padx=10)
 
-    destinationLabel = ttk.Label(left_frame, text="País de Destino:", style="TLabel")
+    destinationLabel = ttk.Label(
+        left_frame, text="País de Destino:", style="TLabel")
     destinationLabel.grid(row=1, column=1, padx=10, sticky="w")
     destinations = destinationsList(graph)
     destination = ttk.Combobox(left_frame, values=destinations)
     destination.grid(row=2, column=1, padx=10, sticky="w")
 
-    visaLabel = ttk.Label(left_frame, text="¿Cuenta con Visa?:", style="TLabel")
+    visaLabel = ttk.Label(
+        left_frame, text="¿Cuenta con Visa?:", style="TLabel")
     visaLabel.grid(row=1, column=2, padx=10, sticky="w")
     visa = ttk.Combobox(left_frame, values=["Si", "No"], state="readonly")
     visa.grid(row=2, column=2, padx=10)
 
     pathLabel = ttk.Label(left_frame, text="Tipo de ruta:", style="TLabel")
     pathLabel.grid(row=1, column=3, padx=10, sticky="w")
-    pathType = ttk.Combobox(left_frame, values=["Ruta más barata", "Ruta con menos paradas"], state="readonly")
+    pathType = ttk.Combobox(left_frame, values=[
+                            "Ruta más barata", "Ruta con menos paradas"], state="readonly")
     pathType.grid(row=2, column=3, padx=10)
 
-    travel = ttk.Button(left_frame, text="Buscar vuelos", command=lambda: printRoute(graph, origin, destination, visa, pathType), style="TButton")
+    travel = ttk.Button(left_frame, text="Buscar vuelos", command=lambda: printRoute(
+        graph, origin, destination, visa, pathType), style="TButton")
     travel.grid(row=3, column=0, columnspan=4, pady=20)
 
     # Lado derecho
     right_frame = ttk.Frame(interface)
     right_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
-    
+
     drawGraph(graph)
 
     interface.mainloop()
