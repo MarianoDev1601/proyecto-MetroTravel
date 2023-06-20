@@ -134,91 +134,96 @@ def printRoute(graph, origin, destination, visa, pathType):
     clearRows([4,5,6,7,8])
     if(origin.get() != "" and destination.get() != "" and visa.get() != "" and pathType.get() != ""):
         if ((origin.get().upper() in origins) and (destination.get().upper() in destinations)):
-            startNode = origin.get().upper()
-            end_node = destination.get().upper()
-            
-            path = pathType.get()
-            
-            if visa.get() == "Si":
-                hasVisa = True
-            elif visa.get() == "No":
-                hasVisa = False
-                    
-            try:
-                if path == "Ruta con menos paradas":
-                    shortest_distance, shortest_path = graph.findShortestStopPath(startNode, end_node, hasVisa)
-                    
-                    finalPath = ""
-                    index = 1
-                    scales = len(shortest_path)
-                    
-                    for node in shortest_path:
-                        if index < scales:
-                            finalPath += node + " ---> " 
-                            index += 1
-                        else:
-                            finalPath += node
-                            
-                    drawGraphNX(graph, shortest_path)
-                    
-                    result = ttk.Label(left_frame, text="¡Vuelos Encontrados!", font=("Arial", 14), background="orange")
-                    result.grid(row=4, column=0, columnspan=4, pady=10)
-                    
-                    countryL = ttk.Label(left_frame, text="Ruta encontrada:", font=("Arial", 14), background="orange")
-                    countryL.grid(row=5, column=0, columnspan=2, pady=5)
-                    country = ttk.Label(left_frame, text=finalPath, font=("Arial", 14), background="orange")
-                    country.grid(row=6, column=0, columnspan=2, pady=5)
-                    
-                    stopsL = ttk.Label(left_frame, text="Número de escalas:", font=("Arial", 14), background="orange")
-                    stopsL.grid(row=5, column=2, pady=5)
-                    stops = ttk.Label(left_frame, text=str(scales-2), font=("Arial", 14), background="orange")
-                    stops.grid(row=6, column=2, pady=5)
-                    
-                    costL = ttk.Label(left_frame, text="Costo total:", font=("Arial", 14), background="orange")
-                    costL.grid(row=5, column=3, pady=5)
-                    cost = ttk.Label(left_frame, text="$" + str(shortest_distance), font=("Arial", 14), background="orange")
-                    cost.grid(row=6, column=3, pady=5)
-                    
-                    
-                elif path == "Ruta más barata":
-                    shortest_distance, shortest_path = graph.findShortestPath(startNode, end_node, hasVisa)
-                    
-                    finalPath = ""
-                    index = 1
-                    scales = len(shortest_path)
-                    
-                    for node in shortest_path:
-                        if index < scales:
-                            finalPath += node + " ---> " 
-                            index += 1
-                        else:
-                            finalPath += node
-                            
-                    drawGraphNX(graph, shortest_path)
-                    
-                    result = ttk.Label(left_frame, text="¡Vuelos Encontrados!", font=("Arial", 14), background="orange")
-                    result.grid(row=4, column=0, columnspan=4, pady=10)
-                    
-                    countryL = ttk.Label(left_frame, text="Ruta encontrada:", font=("Arial", 14), background="orange")
-                    countryL.grid(row=5, column=0, columnspan=2, pady=5)
-                    country = ttk.Label(left_frame, text=finalPath, font=("Arial", 14), background="orange")
-                    country.grid(row=6, column=0, columnspan=2, pady=5)
-                    
-                    stopsL = ttk.Label(left_frame, text="Número de escalas:", font=("Arial", 14), background="orange")
-                    stopsL.grid(row=5, column=2, pady=5)
-                    stops = ttk.Label(left_frame, text=str(scales-2), font=("Arial", 14), background="orange")
-                    stops.grid(row=6, column=2, pady=5)
-                    
-                    costL = ttk.Label(left_frame, text="Costo total:", font=("Arial", 14), background="orange")
-                    costL.grid(row=5, column=3, pady=5)
-                    cost = ttk.Label(left_frame, text="$" + str(shortest_distance), font=("Arial", 14), background="orange")
-                    cost.grid(row=6, column=3, pady=5)
+            if (origin.get().upper() != destination.get().upper()):
+                startNode = origin.get().upper()
+                end_node = destination.get().upper()
                 
-            except ValueError:
-                errorDialog()
+                path = pathType.get()
+                
+                if visa.get() == "Si":
+                    hasVisa = True
+                elif visa.get() == "No":
+                    hasVisa = False
+                        
+                try:
+                    if path == "Ruta con menos paradas":
+                        shortest_distance, shortest_path = graph.findShortestStopPath(startNode, end_node, hasVisa)
+                        
+                        finalPath = ""
+                        index = 1
+                        scales = len(shortest_path)
+                        
+                        for node in shortest_path:
+                            if index < scales:
+                                finalPath += node + " ---> " 
+                                index += 1
+                            else:
+                                finalPath += node
+                                
+                        drawGraphNX(graph, shortest_path)
+                        
+                        result = ttk.Label(left_frame, text="¡Vuelos Encontrados!", font=("Arial", 14), background="orange")
+                        result.grid(row=4, column=0, columnspan=4, pady=10)
+                        
+                        countryL = ttk.Label(left_frame, text="Ruta encontrada:", font=("Arial", 14), background="orange")
+                        countryL.grid(row=5, column=0, columnspan=2, pady=5)
+                        country = ttk.Label(left_frame, text=finalPath, font=("Arial", 14), background="orange")
+                        country.grid(row=6, column=0, columnspan=2, pady=5)
+                        
+                        stopsL = ttk.Label(left_frame, text="Número de escalas:", font=("Arial", 14), background="orange")
+                        stopsL.grid(row=5, column=2, pady=5)
+                        stops = ttk.Label(left_frame, text=str(scales-2), font=("Arial", 14), background="orange")
+                        stops.grid(row=6, column=2, pady=5)
+                        
+                        costL = ttk.Label(left_frame, text="Costo total:", font=("Arial", 14), background="orange")
+                        costL.grid(row=5, column=3, pady=5)
+                        cost = ttk.Label(left_frame, text="$" + str(shortest_distance), font=("Arial", 14), background="orange")
+                        cost.grid(row=6, column=3, pady=5)
+                        
+                        
+                    elif path == "Ruta más barata":
+                        shortest_distance, shortest_path = graph.findShortestPath(startNode, end_node, hasVisa)
+                        
+                        finalPath = ""
+                        index = 1
+                        scales = len(shortest_path)
+                        
+                        for node in shortest_path:
+                            if index < scales:
+                                finalPath += node + " ---> " 
+                                index += 1
+                            else:
+                                finalPath += node
+                                
+                        drawGraphNX(graph, shortest_path)
+                        
+                        result = ttk.Label(left_frame, text="¡Vuelos Encontrados!", font=("Arial", 14), background="orange")
+                        result.grid(row=4, column=0, columnspan=4, pady=10)
+                        
+                        countryL = ttk.Label(left_frame, text="Ruta encontrada:", font=("Arial", 14), background="orange")
+                        countryL.grid(row=5, column=0, columnspan=2, pady=5)
+                        country = ttk.Label(left_frame, text=finalPath, font=("Arial", 14), background="orange")
+                        country.grid(row=6, column=0, columnspan=2, pady=5)
+                        
+                        stopsL = ttk.Label(left_frame, text="Número de escalas:", font=("Arial", 14), background="orange")
+                        stopsL.grid(row=5, column=2, pady=5)
+                        stops = ttk.Label(left_frame, text=str(scales-2), font=("Arial", 14), background="orange")
+                        stops.grid(row=6, column=2, pady=5)
+                        
+                        costL = ttk.Label(left_frame, text="Costo total:", font=("Arial", 14), background="orange")
+                        costL.grid(row=5, column=3, pady=5)
+                        cost = ttk.Label(left_frame, text="$" + str(shortest_distance), font=("Arial", 14), background="orange")
+                        cost.grid(row=6, column=3, pady=5)
+                
+                except ValueError:
+                    errorDialog()
+                    drawGraph()
+            else:
+                sameDialog()
                 drawGraph()
         else:
             codeDialog()
+            drawGraph()
     else:
         validateDialog()
         drawGraph()
@@ -232,6 +237,9 @@ def codeDialog():
 
 def errorDialog():
     messagebox.showerror("Error", "No cuenta con la Visa para viajar.")
+    
+def sameDialog():
+    messagebox.showerror("Error", "El país de destino no puede ser el mismo que el de origen.")
 
 
 def start(graph: Graph):
