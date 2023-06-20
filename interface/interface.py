@@ -217,16 +217,16 @@ def printRoute(graph, origin, destination, visa, pathType):
                 
                 except ValueError:
                     errorDialog()
-                    drawGraph()
+                    drawGraph(graph)
             else:
                 sameDialog()
-                drawGraph()
+                drawGraph(graph)
         else:
             codeDialog()
-            drawGraph()
+            drawGraph(graph)
     else:
         validateDialog()
-        drawGraph()
+        drawGraph(graph)
 
 
 def validateDialog():
